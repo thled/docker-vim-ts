@@ -22,5 +22,11 @@ Plug 'tpope/vim-commentary'
 " surround
 Plug 'tpope/vim-surround'
 
+" typescript lint
+Plug 'pangloss/vim-javascript'
+Plug 'leafgarland/typescript-vim'
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'jparise/vim-graphql'
+
 call plug#end()
 
