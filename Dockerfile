@@ -40,7 +40,8 @@ RUN \
     && nvim --headless +'CocInstall -sync coc-markdownlint' +qall \
     && nvim --headless +'CocInstall -sync coc-html' +qall \
     && nvim --headless +'CocInstall -sync coc-css' +qall \
-    && nvim --headless +'CocInstall -sync coc-tsserver' +qall
+    && nvim --headless +'CocInstall -sync coc-tsserver' +qall \
+    && nvim --headless +'CocInstall -sync coc-prettier' +qall
 
 # install coc-xml dependencies
 # RUN cd /home/neovim \
