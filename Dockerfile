@@ -1,58 +1,77 @@
-FROM alpine:latest
+FROM alpine:3.14 as tools
+
+RUN apk add --no-cache \
+    git \
+    build-base \
+    cmake \
+    automake \
+    autoconf \
+    libtool \
+    pkgconf \
+    coreutils \
+    curl \
+    unzip \
+    gettext-tiny-dev \
+    musl-dev
+
+WORKDIR /tools
+
+RUN \
+    # build neovim
+    cd /tools \
+    && git clone https://github.com/neovim/neovim.git \
+    && cd neovim \
+    && make CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX=/tools/nvim install \
+    # fetch plugin manager for neovim
+    && cd /tools \
+    && curl -fLo /tools/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
+    # build fzf-native for telescope
+    && cd /tools \
+    && git clone https://github.com/nvim-telescope/telescope-fzf-native.nvim.git \
+    && cd telescope-fzf-native.nvim \
+    && make
+
+FROM alpine:3.14
 
 ENV RIPGREP_CONFIG_PATH "/home/neovim/.config/ripgrep/config"
-ENV FZF_DEFAULT_COMMAND "rg --files --hidden"
 
-# install neovim and dependencies
 RUN apk add --no-cache \
-    neovim neovim-doc \
-    # needed by dockerfile
-    curl \
-    # needed by neovim as providers
-    python3-dev py-pip gcc musl-dev \
+    # needed by neovim as provider
+    python3-dev py-pip musl-dev g++ curl \
     nodejs yarn \
-    # needed by fzf
-    bash ripgrep git
+    # needed by telescope
+    ripgrep git \
+    # needed by lsp
+    && yarn global add typescript typescript-language-server
 
-COPY config /home/neovim/.config
+# add neovim
+COPY --from=tools /tools/nvim /nvim
+RUN ln -s /nvim/bin/nvim /usr/bin/nvim
 
-RUN adduser -D neovim \
-    && chmod 777 /usr/local/bin \
-    && chown -R neovim:neovim /home/neovim
-
+# add user
+RUN adduser -D neovim
 USER neovim
+
+# add neovim config
+COPY --chown=neovim:neovim config /home/neovim/.config
+
+# add vim-plug
+COPY --chown=neovim:neovim --from=tools /tools/plug.vim /home/neovim/.config/nvim/autoload/
+
+# add fzf-native
+COPY --chown=neovim:neovim --from=tools /tools/telescope-fzf-native.nvim/build/libfzf.so /home/neovim/
 
 RUN \
     # install python's neovim plugin
     pip install pynvim \
     # install node's neovim plugin
     && yarn global add neovim \
-    # install plugin manager for neovim
-    && curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
     # install neovim plugins
     && nvim --headless +PlugInstall +qall \
-    # install coc extensions (one at a time otherwise some fail)
-    && nvim --headless +'CocInstall -sync coc-snippets ' +qall \
-    && nvim --headless +'CocInstall -sync coc-json' +qall \
-    && nvim --headless +'CocInstall -sync coc-yaml' +qall \
-    # && nvim --headless +'CocInstall -sync coc-xml' +qall \
-    && nvim --headless +'CocInstall -sync coc-markdownlint' +qall \
-    && nvim --headless +'CocInstall -sync coc-html' +qall \
-    && nvim --headless +'CocInstall -sync coc-css' +qall \
-    && nvim --headless +'CocInstall -sync coc-tsserver' +qall \
-    && nvim --headless +'CocInstall -sync coc-prettier' +qall
-
-# install coc-xml dependencies
-# RUN cd /home/neovim \
-#     openjdk11 \
-#     # install limmex
-#     && git clone https://github.com/eclipse/lemminx.git \
-#     && cd lemminx && ./mvnw clean verify \
-#     && mv org.eclipse.lemminx/taget/org.eclipse.lemminx-uber.jar /home/neovim/.config/coc/extensions/coc-xml-data \
-#     && rm -rf /home/neovim/lemminx
+    # install treesitter languages
+    && nvim --headless +"TSInstallSync typescript yaml json css scss html javascript" +q
 
 WORKDIR /data
 
-ENTRYPOINT [ "/usr/bin/nvim" ]
+ENTRYPOINT [ "nvim", "."]
 

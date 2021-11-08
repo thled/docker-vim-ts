@@ -1,33 +1,48 @@
 call plug#begin()
 
 " theme
-Plug 'morhetz/gruvbox'
+Plug 'sainnhe/gruvbox-material'
 
 " statusline
-Plug 'itchyny/lightline.vim'
+Plug 'hoob3rt/lualine.nvim'
+
+" syntax highlighting
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+" lsp
+Plug 'neovim/nvim-lspconfig'
 
 " search
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', {'do': 'mkdir build; mv ~/libfzf.so build'}
+Plug 'nvim-telescope/telescope.nvim'
 
-" autocomplete + navigation
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" autocomplete
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'saadparwaiz1/cmp_luasnip'
+Plug 'L3MON4D3/LuaSnip'
 
 " git
-Plug 'mhinz/vim-signify'
+Plug 'lewis6991/gitsigns.nvim'
 
-" comment in/out
-Plug 'tpope/vim-commentary'
+" comment
+Plug 'terrortylor/nvim-comment'
 
 " surround
 Plug 'tpope/vim-surround'
 
-" typescript lint
-" Plug 'pangloss/vim-javascript'
-" Plug 'leafgarland/typescript-vim'
-Plug 'HerringtonDarkholme/yats.vim'
-" Plug 'maxmellon/vim-jsx-pretty'
-" Plug 'jparise/vim-graphql'
+" additional text objects
+Plug 'wellle/targets.vim'
+
+" switch true/false
+Plug 'zef/vim-cycle'
+
+" ai assistance
+Plug 'github/copilot.vim'
 
 call plug#end()
 
