@@ -28,3 +28,6 @@ tnoremap <Esc> <C-\><C-n>
 " allow unsaved buffer switch
 set hidden
 
+" do not automatically insert comment
+autocmd BufNewFile,BufRead * setlocal formatoptions-=ro
+
