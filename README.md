@@ -8,9 +8,23 @@ A Docker container to run neovim with plugins to assist TypeScript development.
 
 ## Installation
 
-1. Clone this repository: `$ git clone git@github.com:thled/docker-vim-ts.git`
-1. Change to project directory: `$ cd docker-vim-ts`
-1. Build image: `$ docker build -t tvim .`
+1. Clone this repository:
+
+    ```shell
+    git clone git@github.com:thled/docker-vim-ts.git
+    ```
+
+1. Change to project directory:
+
+    ```shell
+    cd docker-vim-ts
+    ```
+
+1. Build image (`arg` for Copilot beta key is optional):
+
+    ```shell
+    docker build --build-arg COPILOT_TOKEN=XXX -t tvim .
+    ```
 
 ## Usage
 
@@ -19,22 +33,30 @@ A Docker container to run neovim with plugins to assist TypeScript development.
 ## Misc
 
 - Useful key bindings: <https://gist.github.com/thled/a6fcf4a02108598ae9ba5a8ab01d84e0#neovim>
-- Remap detach keys: `$ echo '{ "detachKeys": "ctrl-q,q" }' > ~/.docker/config.json`
+- Remap detach keys:
+
+    ```shell
+    echo '{ "detachKeys": "ctrl-q,q" }' > ~/.docker/config.json
+    ```
+
 - Save as alias "tvim":
-  - Fish:
+    - Fish:
 
-  ```shell
-  $ function tvim
-      docker run --rm -it -v (pwd):/data tvim
-    end
-  $ funcsave tvim
-  ```
+        ```shell
+        function tvim
+        docker run --rm -it -v (pwd):/data tvim
+        end
+        ```
 
-  - Bash:
+        ```shell
+        funcsave tvim
+        ```
 
-  ```shell
-  $ echo 'alias tvim="docker run --rm -it -v $(pwd):/data tvim"' >> ~/.bashrc
-  ```
+    - Bash:
+
+    ```shell
+    echo 'alias tvim="docker run --rm -it -v $(pwd):/data tvim"' >> ~/.bashrc
+    ```
 
 [docker]: https://docs.docker.com/install
 

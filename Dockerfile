@@ -33,6 +33,8 @@ RUN \
 
 FROM alpine:3.14
 
+ARG COPILOT_TOKEN="override me"
+
 ENV RIPGREP_CONFIG_PATH "/home/neovim/.config/ripgrep/config"
 
 RUN apk add --no-cache \
@@ -69,7 +71,9 @@ RUN \
     # install neovim plugins
     && nvim --headless +PlugInstall +qall \
     # install treesitter languages
-    && nvim --headless +"TSInstallSync typescript yaml json css scss html javascript" +q
+    && nvim --headless +"TSInstallSync typescript yaml json css scss html javascript" +q \
+    # insert copilot beta key
+    && sed -i "s/<TOKEN>/$COPILOT_TOKEN/" /home/neovim/.config/github-copilot/hosts.json
 
 WORKDIR /data
 
