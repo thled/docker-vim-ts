@@ -13,7 +13,7 @@ set number relativenumber
 set ignorecase smartcase
 
 " indentation
-set tabstop=4 softtabstop=4 shiftwidth=4 expandtab smartindent
+set tabstop=2 softtabstop=2 shiftwidth=2 expandtab smartindent
 
 " ruler
 set colorcolumn=120
